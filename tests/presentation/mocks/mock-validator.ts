@@ -1,7 +1,7 @@
 import { Validation } from '@/presentation/protocols'
 
 export class ValidationSpy implements Validation {
-  result: Error | boolean = true
+  result: Error | boolean = false
   data: any
 
   isValid (data: any): Error | boolean {

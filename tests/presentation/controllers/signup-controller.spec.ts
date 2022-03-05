@@ -1,5 +1,5 @@
 import { SignUpController } from '@/presentation/controllers'
-import { badRequest } from '@/presentation/helpers'
+import { badRequest, serverError } from '@/presentation/helpers'
 import { ValidationSpy } from '../mocks'
 
 const mockRequest = (): SignUpController.Request => ({
@@ -34,5 +34,12 @@ describe('SignUp Controller', () => {
     validationSpy.result = new Error()
     const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse).toEqual(badRequest(new Error()))
+  })
+
+  it('Should return 500 if Validation throws', async () => {
+    const { sut, validationSpy } = makeSut()
+    validationSpy.result = new Error()
+    const httpResponse = await sut.handle(mockRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
