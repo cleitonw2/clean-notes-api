@@ -1,20 +1,23 @@
 import { DbAddAccount } from '@/data/usecases'
-import { AddAccountRepositorySpy, HaserSpy } from '../mocks'
+import { AddAccountRepositorySpy, EncrypterSpy, HaserSpy } from '../mocks'
 
 type SutTypes = {
   sut: DbAddAccount
   addAccountRepositorySpy: AddAccountRepositorySpy
   hasherSpy: HaserSpy
+  encrypterSpy: EncrypterSpy
 }
 
 const makeSut = (): SutTypes => {
   const hasherSpy = new HaserSpy()
+  const encrypterSpy = new EncrypterSpy()
   const addAccountRepositorySpy = new AddAccountRepositorySpy()
-  const sut = new DbAddAccount(addAccountRepositorySpy, hasherSpy)
+  const sut = new DbAddAccount(addAccountRepositorySpy, hasherSpy, encrypterSpy)
   return {
     sut,
     addAccountRepositorySpy,
-    hasherSpy
+    hasherSpy,
+    encrypterSpy
   }
 }
 
@@ -63,5 +66,16 @@ describe('DbAddAccount', () => {
     }
     const promise = sut.add(params)
     expect(promise).rejects.toThrow()
+  })
+
+  it('Should call Encrypter with correct value', async () => {
+    const { sut, encrypterSpy, addAccountRepositorySpy } = makeSut()
+    const params = {
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+    }
+    await sut.add(params)
+    expect(addAccountRepositorySpy.result.id).toBe(encrypterSpy.value)
   })
 })
