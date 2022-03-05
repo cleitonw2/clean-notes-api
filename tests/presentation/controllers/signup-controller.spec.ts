@@ -1,6 +1,6 @@
 import { SignUpController } from '@/presentation/controllers'
 import { badRequest, serverError } from '@/presentation/helpers'
-import { ValidationSpy } from '../mocks'
+import { AddAccountSpy, ValidationSpy } from '../mocks'
 
 const mockRequest = (): SignUpController.Request => ({
   name: 'any_name',
@@ -11,14 +11,17 @@ const mockRequest = (): SignUpController.Request => ({
 type SutTypes = {
   sut: SignUpController
   validationSpy: ValidationSpy
+  addAccount: AddAccountSpy
 }
 
 const makeSut = (): SutTypes => {
   const validationSpy = new ValidationSpy()
-  const sut = new SignUpController(validationSpy)
+  const addAccount = new AddAccountSpy()
+  const sut = new SignUpController(validationSpy, addAccount)
   return {
     sut,
-    validationSpy
+    validationSpy,
+    addAccount
   }
 }
 describe('SignUp Controller', () => {
@@ -41,5 +44,12 @@ describe('SignUp Controller', () => {
     validationSpy.result = new Error()
     const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  it('Should call AddAccount with correct values', async () => {
+    const { sut, addAccount } = makeSut()
+    const request = mockRequest()
+    await sut.handle(request)
+    expect(request).toEqual(addAccount.params)
   })
 })
