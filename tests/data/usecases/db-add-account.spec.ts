@@ -1,27 +1,46 @@
 import { DbAddAccount } from '@/data/usecases'
-import { AddAccountRepositorySpy, EncrypterSpy, HaserSpy } from '../mocks'
+import { AddAccountRepositorySpy, CheckAccountByEmailRepositorySpy, EncrypterSpy, HaserSpy } from '../mocks'
 
 type SutTypes = {
   sut: DbAddAccount
   addAccountRepositorySpy: AddAccountRepositorySpy
   hasherSpy: HaserSpy
   encrypterSpy: EncrypterSpy
+  checkAccountByEmailRepositorySpy: CheckAccountByEmailRepositorySpy
 }
 
 const makeSut = (): SutTypes => {
   const hasherSpy = new HaserSpy()
   const encrypterSpy = new EncrypterSpy()
   const addAccountRepositorySpy = new AddAccountRepositorySpy()
-  const sut = new DbAddAccount(addAccountRepositorySpy, hasherSpy, encrypterSpy)
+  const checkAccountByEmailRepositorySpy = new CheckAccountByEmailRepositorySpy()
+  const sut = new DbAddAccount(
+    addAccountRepositorySpy,
+    hasherSpy,
+    encrypterSpy,
+    checkAccountByEmailRepositorySpy
+  )
   return {
     sut,
     addAccountRepositorySpy,
     hasherSpy,
-    encrypterSpy
+    encrypterSpy,
+    checkAccountByEmailRepositorySpy
   }
 }
 
 describe('DbAddAccount', () => {
+  it('Should call CheckAccountByEmailRepository with correct value', async () => {
+    const { sut, checkAccountByEmailRepositorySpy } = makeSut()
+    const params = {
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+    }
+    await sut.add(params)
+    expect(params.email).toEqual(checkAccountByEmailRepositorySpy.email)
+  })
+
   it('Should call AddAccountRepository with correct values', async () => {
     const { sut, addAccountRepositorySpy } = makeSut()
     const params = {
