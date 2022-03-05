@@ -1,5 +1,5 @@
 import { AddAccount } from '@/usecases/add-account'
-import { AddAccountRepository } from '@/data/add-account-repository'
+import { AddAccountRepository } from '@/data/protocols'
 
 class AddAccountRepositorySpy implements AddAccountRepository {
   params: AddAccountRepository.Params
