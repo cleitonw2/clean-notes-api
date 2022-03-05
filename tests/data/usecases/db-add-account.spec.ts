@@ -41,6 +41,18 @@ describe('DbAddAccount', () => {
     expect(params.email).toEqual(checkAccountByEmailRepositorySpy.email)
   })
 
+  it('Should return false if CheckAccountByEmailRepository returns true', async () => {
+    const { sut, checkAccountByEmailRepositorySpy } = makeSut()
+    checkAccountByEmailRepositorySpy.result = true
+    const params = {
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+    }
+    const result = await sut.add(params)
+    expect(result).toBe(false)
+  })
+
   it('Should call AddAccountRepository with correct values', async () => {
     const { sut, addAccountRepositorySpy } = makeSut()
     const params = {
@@ -117,7 +129,7 @@ describe('DbAddAccount', () => {
       email: 'any_email',
       password: 'any_password'
     }
-    const { accessToken } = await sut.add(params)
-    expect(accessToken).toBe(encrypterSpy.result)
+    const result = await sut.add(params) as any
+    expect(result.accessToken).toBe(encrypterSpy.result)
   })
 })
