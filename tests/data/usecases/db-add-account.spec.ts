@@ -1,16 +1,5 @@
-import { AddAccountRepository } from '@/data/protocols'
 import { DbAddAccount } from '@/data/usecases'
-
-class AddAccountRepositorySpy implements AddAccountRepository {
-  params: AddAccountRepository.Params
-
-  async add (data: AddAccountRepository.Params): Promise<AddAccountRepository.Result> {
-    this.params = data
-    return {
-      id: 'any_id'
-    }
-  }
-}
+import { AddAccountRepositorySpy } from '../mocks'
 
 describe('DbAddAccount', () => {
   it('Should call AddAccountRepository with correct values', async () => {
