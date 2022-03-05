@@ -1,5 +1,5 @@
 import { SignUpController } from '@/presentation/controllers'
-import { badRequest, serverError, forbidden } from '@/presentation/helpers'
+import { badRequest, serverError, forbidden, ok } from '@/presentation/helpers'
 import { EmailInUseError } from '@/presentation/errors'
 import { AddAccountSpy, ValidationSpy } from '../mocks'
 
@@ -69,5 +69,11 @@ describe('SignUp Controller', () => {
     jest.spyOn(addAccount, 'add').mockRejectedValueOnce(new Error())
     const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  it('Should return a accessToken on success', async () => {
+    const { sut, addAccount } = makeSut()
+    const httpResponse = await sut.handle(mockRequest())
+    expect(httpResponse).toEqual(ok(addAccount.result))
   })
 })
