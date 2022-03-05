@@ -1,4 +1,5 @@
 import { DbAddAccount } from '@/data/usecases'
+import { mockAccountParams } from '@/../tests/usecases'
 import { AddAccountRepositorySpy, CheckAccountByEmailRepositorySpy, EncrypterSpy, HaserSpy } from '../mocks'
 
 type SutTypes = {
@@ -32,11 +33,7 @@ const makeSut = (): SutTypes => {
 describe('DbAddAccount', () => {
   it('Should call CheckAccountByEmailRepository with correct value', async () => {
     const { sut, checkAccountByEmailRepositorySpy } = makeSut()
-    const params = {
-      name: 'any_name',
-      email: 'any_email',
-      password: 'any_password'
-    }
+    const params = mockAccountParams()
     await sut.add(params)
     expect(params.email).toEqual(checkAccountByEmailRepositorySpy.email)
   })
@@ -44,34 +41,20 @@ describe('DbAddAccount', () => {
   it('Should return false if CheckAccountByEmailRepository returns true', async () => {
     const { sut, checkAccountByEmailRepositorySpy } = makeSut()
     checkAccountByEmailRepositorySpy.result = true
-    const params = {
-      name: 'any_name',
-      email: 'any_email',
-      password: 'any_password'
-    }
-    const result = await sut.add(params)
+    const result = await sut.add(mockAccountParams())
     expect(result).toBe(false)
   })
 
   it('Should throw if CheckAccountByEmailRepository throws', async () => {
     const { sut, checkAccountByEmailRepositorySpy } = makeSut()
     jest.spyOn(checkAccountByEmailRepositorySpy, 'checkByEmail').mockRejectedValueOnce(new Error())
-    const params = {
-      name: 'any_name',
-      email: 'any_email',
-      password: 'any_password'
-    }
-    const promise = sut.add(params)
+    const promise = sut.add(mockAccountParams())
     expect(promise).rejects.toThrow()
   })
 
   it('Should call Hasher with correct value', async () => {
     const { sut, hasherSpy } = makeSut()
-    const params = {
-      name: 'any_name',
-      email: 'any_email',
-      password: 'any_password'
-    }
+    const params = mockAccountParams()
     await sut.add(params)
     expect(params.password).toBe(hasherSpy.value)
   })
@@ -79,22 +62,13 @@ describe('DbAddAccount', () => {
   it('Should throw if Hasher throws', async () => {
     const { sut, hasherSpy } = makeSut()
     jest.spyOn(hasherSpy, 'hash').mockRejectedValueOnce(new Error())
-    const params = {
-      name: 'any_name',
-      email: 'any_email',
-      password: 'any_password'
-    }
-    const promise = sut.add(params)
+    const promise = sut.add(mockAccountParams())
     expect(promise).rejects.toThrow()
   })
 
   it('Should call AddAccountRepository with correct values', async () => {
     const { sut, addAccountRepositorySpy } = makeSut()
-    const params = {
-      name: 'any_name',
-      email: 'any_email',
-      password: 'any_password'
-    }
+    const params = mockAccountParams()
     await sut.add(params)
     expect(params).toEqual(addAccountRepositorySpy.params)
   })
@@ -102,46 +76,26 @@ describe('DbAddAccount', () => {
   it('Should throw if AddAccountRepository throws', async () => {
     const { sut, addAccountRepositorySpy } = makeSut()
     jest.spyOn(addAccountRepositorySpy, 'add').mockRejectedValueOnce(new Error())
-    const params = {
-      name: 'any_name',
-      email: 'any_email',
-      password: 'any_password'
-    }
-    const promise = sut.add(params)
+    const promise = sut.add(mockAccountParams())
     expect(promise).rejects.toThrow()
   })
 
   it('Should call Encrypter with correct value', async () => {
     const { sut, encrypterSpy, addAccountRepositorySpy } = makeSut()
-    const params = {
-      name: 'any_name',
-      email: 'any_email',
-      password: 'any_password'
-    }
-    await sut.add(params)
+    await sut.add(mockAccountParams())
     expect(addAccountRepositorySpy.result.id).toBe(encrypterSpy.value)
   })
 
   it('Should throw if Encrypter throws', async () => {
     const { sut, encrypterSpy } = makeSut()
     jest.spyOn(encrypterSpy, 'encrypt').mockRejectedValueOnce(new Error())
-    const params = {
-      name: 'any_name',
-      email: 'any_email',
-      password: 'any_password'
-    }
-    const promise = sut.add(params)
+    const promise = sut.add(mockAccountParams())
     expect(promise).rejects.toThrow()
   })
 
   it('Should return on accessToken on success', async () => {
     const { sut, encrypterSpy } = makeSut()
-    const params = {
-      name: 'any_name',
-      email: 'any_email',
-      password: 'any_password'
-    }
-    const result = await sut.add(params) as any
+    const result = await sut.add(mockAccountParams()) as any
     expect(result.accessToken).toBe(encrypterSpy.result)
   })
 })
