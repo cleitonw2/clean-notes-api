@@ -1,17 +1,20 @@
 import { DbAddAccount } from '@/data/usecases'
-import { AddAccountRepositorySpy } from '../mocks'
+import { AddAccountRepositorySpy, HaserSpy } from '../mocks'
 
 type SutTypes = {
   sut: DbAddAccount
   addAccountRepositorySpy: AddAccountRepositorySpy
+  hasherSpy: HaserSpy
 }
 
 const makeSut = (): SutTypes => {
+  const hasherSpy = new HaserSpy()
   const addAccountRepositorySpy = new AddAccountRepositorySpy()
-  const sut = new DbAddAccount(addAccountRepositorySpy)
+  const sut = new DbAddAccount(addAccountRepositorySpy, hasherSpy)
   return {
     sut,
-    addAccountRepositorySpy
+    addAccountRepositorySpy,
+    hasherSpy
   }
 }
 
@@ -25,5 +28,16 @@ describe('DbAddAccount', () => {
     }
     await sut.add(params)
     expect(params).toEqual(addAccountRepositorySpy.params)
+  })
+
+  it('Should call Hasher with correct value', async () => {
+    const { sut, hasherSpy } = makeSut()
+    const params = {
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+    }
+    await sut.add(params)
+    expect(params.password).toBe(hasherSpy.value)
   })
 })
