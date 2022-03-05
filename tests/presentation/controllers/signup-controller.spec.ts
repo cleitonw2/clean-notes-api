@@ -1,5 +1,6 @@
 import { SignUpController } from '@/presentation/controllers'
-import { badRequest, serverError } from '@/presentation/helpers'
+import { badRequest, serverError, forbidden } from '@/presentation/helpers'
+import { EmailInUseError } from '@/presentation/errors'
 import { AddAccountSpy, ValidationSpy } from '../mocks'
 
 const mockRequest = (): SignUpController.Request => ({
@@ -24,6 +25,7 @@ const makeSut = (): SutTypes => {
     addAccount
   }
 }
+
 describe('SignUp Controller', () => {
   it('Should call Validation with correct values', async () => {
     const { sut, validationSpy } = makeSut()
@@ -41,7 +43,9 @@ describe('SignUp Controller', () => {
 
   it('Should return 500 if Validation throws', async () => {
     const { sut, validationSpy } = makeSut()
-    validationSpy.result = new Error()
+    jest.spyOn(validationSpy, 'isValid').mockImplementation(() => {
+      throw new Error()
+    })
     const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse).toEqual(serverError(new Error()))
   })
@@ -51,5 +55,12 @@ describe('SignUp Controller', () => {
     const request = mockRequest()
     await sut.handle(request)
     expect(request).toEqual(addAccount.params)
+  })
+
+  it('Should return 403 if AddAccount returns false', async () => {
+    const { sut, addAccount } = makeSut()
+    addAccount.result = false
+    const httpResponse = await sut.handle(mockRequest())
+    expect(httpResponse).toEqual(forbidden(new EmailInUseError()))
   })
 })

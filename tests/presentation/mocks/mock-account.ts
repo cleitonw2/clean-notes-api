@@ -2,7 +2,7 @@ import { AddAccount } from '@/usecases/add-account'
 
 export class AddAccountSpy implements AddAccount {
   params: AddAccount.Params
-  result = {
+  result: AddAccount.Result = {
     accessToken: 'any_token'
   }
 
