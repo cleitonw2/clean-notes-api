@@ -1,5 +1,6 @@
 import { AddAccount } from '@/usecases/add-account'
-import { badRequest, serverError } from '../helpers'
+import { EmailInUseError } from '../errors'
+import { badRequest, forbidden, serverError } from '../helpers'
 import { Controller, HttpResponse, Validation } from '../protocols'
 
 export class SignUpController implements Controller {
@@ -12,7 +13,8 @@ export class SignUpController implements Controller {
     try {
       const error = this.validation.isValid(request) as any
       if (error) return badRequest(error)
-      this.addAccount.add(request)
+      const result = await this.addAccount.add(request) as any
+      if (!result) return forbidden(new EmailInUseError())
       return null as any
     } catch (error) {
       return serverError(error)
