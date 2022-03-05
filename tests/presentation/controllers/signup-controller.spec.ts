@@ -63,4 +63,11 @@ describe('SignUp Controller', () => {
     const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse).toEqual(forbidden(new EmailInUseError()))
   })
+
+  it('Should return 500 if AddAccount throws', async () => {
+    const { sut, addAccount } = makeSut()
+    jest.spyOn(addAccount, 'add').mockRejectedValueOnce(new Error())
+    const httpResponse = await sut.handle(mockRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
+  })
 })
