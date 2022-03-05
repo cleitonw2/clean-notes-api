@@ -90,4 +90,15 @@ describe('DbAddAccount', () => {
     const promise = sut.add(params)
     expect(promise).rejects.toThrow()
   })
+
+  it('Should return on accessToken on success', async () => {
+    const { sut, encrypterSpy } = makeSut()
+    const params = {
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+    }
+    const { accessToken } = await sut.add(params)
+    expect(accessToken).toBe(encrypterSpy.result)
+  })
 })
