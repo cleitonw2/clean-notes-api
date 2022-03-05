@@ -1,6 +1,6 @@
 import { AddAccount } from '@/usecases/add-account'
 import { EmailInUseError } from '../errors'
-import { badRequest, forbidden, serverError } from '../helpers'
+import { badRequest, forbidden, serverError, ok } from '../helpers'
 import { Controller, HttpResponse, Validation } from '../protocols'
 
 export class SignUpController implements Controller {
@@ -15,7 +15,7 @@ export class SignUpController implements Controller {
       if (error) return badRequest(error)
       const result = await this.addAccount.add(request) as any
       if (!result) return forbidden(new EmailInUseError())
-      return null as any
+      return ok(result)
     } catch (error) {
       return serverError(error)
     }
