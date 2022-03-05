@@ -1,7 +1,7 @@
 import { Hasher } from '@/data/protocols'
 
 export class HaserSpy implements Hasher {
-  result: string = 'any_result'
+  result: string = 'any_password'
   value: string
 
   async hash (value: string): Promise<string> {
