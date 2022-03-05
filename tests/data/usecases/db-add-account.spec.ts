@@ -53,20 +53,9 @@ describe('DbAddAccount', () => {
     expect(result).toBe(false)
   })
 
-  it('Should call AddAccountRepository with correct values', async () => {
-    const { sut, addAccountRepositorySpy } = makeSut()
-    const params = {
-      name: 'any_name',
-      email: 'any_email',
-      password: 'any_password'
-    }
-    await sut.add(params)
-    expect(params).toEqual(addAccountRepositorySpy.params)
-  })
-
-  it('Should throw if AddAccountRepository throws', async () => {
-    const { sut, addAccountRepositorySpy } = makeSut()
-    jest.spyOn(addAccountRepositorySpy, 'add').mockRejectedValueOnce(new Error())
+  it('Should throw if CheckAccountByEmailRepository throws', async () => {
+    const { sut, checkAccountByEmailRepositorySpy } = makeSut()
+    jest.spyOn(checkAccountByEmailRepositorySpy, 'checkByEmail').mockRejectedValueOnce(new Error())
     const params = {
       name: 'any_name',
       email: 'any_email',
@@ -90,6 +79,29 @@ describe('DbAddAccount', () => {
   it('Should throw if Hasher throws', async () => {
     const { sut, hasherSpy } = makeSut()
     jest.spyOn(hasherSpy, 'hash').mockRejectedValueOnce(new Error())
+    const params = {
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+    }
+    const promise = sut.add(params)
+    expect(promise).rejects.toThrow()
+  })
+
+  it('Should call AddAccountRepository with correct values', async () => {
+    const { sut, addAccountRepositorySpy } = makeSut()
+    const params = {
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+    }
+    await sut.add(params)
+    expect(params).toEqual(addAccountRepositorySpy.params)
+  })
+
+  it('Should throw if AddAccountRepository throws', async () => {
+    const { sut, addAccountRepositorySpy } = makeSut()
+    jest.spyOn(addAccountRepositorySpy, 'add').mockRejectedValueOnce(new Error())
     const params = {
       name: 'any_name',
       email: 'any_email',
