@@ -46,5 +46,18 @@ describe('PgAccountRepository', () => {
       const accountExists = await sut.checkByEmail('any_email')
       expect(accountExists).toBe(false)
     })
+
+    it('Shuld return true if email found', async () => {
+      const sut = makeSut()
+      await prismaClient.account.create({
+        data: {
+          name: 'any_name',
+          email: 'any_email',
+          password: 'any_password'
+        }
+      })
+      const accountExists = await sut.checkByEmail('any_email')
+      expect(accountExists).toBe(true)
+    })
   })
 })
