@@ -12,29 +12,39 @@ describe('PgAccountRepository', () => {
     await prismaClient.account.deleteMany()
   })
 
-  it('Shuld create new account', async () => {
-    const sut = makeSut()
-    await sut.add({
-      name: 'any_name',
-      email: 'any_email',
-      password: 'any_password'
+  describe('add()', () => {
+    it('Shuld create new account', async () => {
+      const sut = makeSut()
+      await sut.add({
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password'
+      })
+      const account = await prismaClient.account.findUnique({
+        where: {
+          email: 'any_email'
+        }
+      })
+      expect(account?.id).toBeTruthy()
+      expect(account?.password).toBe('any_password')
     })
-    const account = await prismaClient.account.findUnique({
-      where: {
-        email: 'any_email'
-      }
+
+    it('Shuld return id on create account', async () => {
+      const sut = makeSut()
+      const account = await sut.add({
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password'
+      })
+      expect(account?.id).toBeTruthy()
     })
-    expect(account?.id).toBeTruthy()
-    expect(account?.password).toBe('any_password')
   })
 
-  it('Shuld return id on create account', async () => {
-    const sut = makeSut()
-    const account = await sut.add({
-      name: 'any_name',
-      email: 'any_email',
-      password: 'any_password'
+  describe('checkByEmail()', () => {
+    it('Shuld return false if email not found', async () => {
+      const sut = makeSut()
+      const accountExists = await sut.checkByEmail('any_email')
+      expect(accountExists).toBe(false)
     })
-    expect(account?.id).toBeTruthy()
   })
 })
