@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "rimraf dist && tsc -p tsconfig-build.json",
+    "up": "docker-compose up -d",
+    "down": "docker-compose down",
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
     "test:staged": "npm test -- --findRelatedTests",
     "test:ci": "npm test -- --coverage",
