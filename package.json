@@ -7,11 +7,12 @@
     "build": "rimraf dist && tsc -p tsconfig-build.json",
     "up": "docker-compose up -d",
     "down": "docker-compose down",
+    "migration": "npx prisma migrate dev --schema ./src/infra/prisma/schema.prisma",
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
     "test:staged": "npm test -- --findRelatedTests",
     "test:ci": "npm test -- --coverage",
     "test:unit": "npm test -- --watch -c jest-unit-config.js",
-    "test:integration": "npm run up && npm test -- --watch -c jest-integration-config.js",
+    "test:integration": "npm run up && npm run migration && npm test -- --watch -c jest-integration-config.js",
     "test:verbose": "jest --passWithNoTests --runInBand",
     "clear:cache": "jest --clearCache",
     "prepare": "husky install"
