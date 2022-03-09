@@ -1,2 +1,5 @@
 node_modules
 src/infra/prisma
+data
+!src/data
+!test/data

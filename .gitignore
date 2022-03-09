@@ -1,4 +1,7 @@
 node_modules
 coverage
 dist
+data
+!src/data
+!test/data
 .env
