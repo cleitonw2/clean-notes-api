@@ -18,5 +18,11 @@ describe('jwt', () => {
       await sut.encrypt('any_value')
       expect(hashSpy).toHaveBeenCalledWith({ id: 'any_value' }, secret)
     })
+
+    it('Should return a token on success', async () => {
+      const sut = makeSut()
+      const token = await sut.encrypt('any_value')
+      expect(token).toBe('any_token')
+    })
   })
 })
