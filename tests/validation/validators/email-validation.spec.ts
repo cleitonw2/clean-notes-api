@@ -40,4 +40,10 @@ describe('EmailValidation', () => {
     })
     expect(sut.isValid).toThrow()
   })
+
+  it('Should return false if EmailValidator returns true', () => {
+    const { sut, email } = makeSut()
+    const error = sut.isValid({ email })
+    expect(error).toBe(false)
+  })
 })
