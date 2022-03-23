@@ -36,7 +36,12 @@ describe('DbAddAccount', () => {
     expect(result).toBe(false)
   })
 
-  it.todo('Should throw if LoadAccountByEmailRepository throws')
+  it('Should throw if LoadAccountByEmailRepository throws', async () => {
+    const { sut, loadAccountByEmailRepositorySpy } = makeSut()
+    jest.spyOn(loadAccountByEmailRepositorySpy, 'loadByEmail').mockRejectedValueOnce(new Error())
+    const promise = sut.auth(authParams)
+    expect(promise).rejects.toThrow()
+  })
 
   it.todo('Should call HashComparer with correct values')
   it.todo('Should return false if HashComparer returns false')
