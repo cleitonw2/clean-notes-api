@@ -1,19 +1,23 @@
 import { DbAuthentication } from '@/data/usecases'
-import { LoadAccountByEmailRepositorySpy } from '../mocks'
+import { LoadAccountByEmailRepositorySpy, HashComparerSpy } from '../mocks'
 
 type SutTypes = {
   sut: DbAuthentication
   loadAccountByEmailRepositorySpy: LoadAccountByEmailRepositorySpy
+  hashComparerSpy: HashComparerSpy
 }
 
 const makeSut = (): SutTypes => {
   const loadAccountByEmailRepositorySpy = new LoadAccountByEmailRepositorySpy()
+  const hashComparerSpy = new HashComparerSpy()
   const sut = new DbAuthentication(
-    loadAccountByEmailRepositorySpy
+    loadAccountByEmailRepositorySpy,
+    hashComparerSpy
   )
   return {
     sut,
-    loadAccountByEmailRepositorySpy
+    loadAccountByEmailRepositorySpy,
+    hashComparerSpy
   }
 }
 
@@ -26,7 +30,7 @@ describe('DbAddAccount', () => {
   it('Should call LoadAccountByEmailRepository with correct value', async () => {
     const { sut, loadAccountByEmailRepositorySpy } = makeSut()
     await sut.auth(authParams)
-    expect(authParams.email).toEqual(loadAccountByEmailRepositorySpy.email)
+    expect(loadAccountByEmailRepositorySpy.email).toEqual(authParams.email)
   })
 
   it('Should return false if LoadAccountByEmailRepository returns null', async () => {
@@ -43,7 +47,13 @@ describe('DbAddAccount', () => {
     expect(promise).rejects.toThrow()
   })
 
-  it.todo('Should call HashComparer with correct values')
+  it('Should call HashComparer with correct values', async () => {
+    const { sut, hashComparerSpy, loadAccountByEmailRepositorySpy } = makeSut()
+    await sut.auth(authParams)
+    expect(hashComparerSpy.value).toBe(authParams.password)
+    expect(hashComparerSpy.hash).toBe(loadAccountByEmailRepositorySpy.result.password)
+  })
+
   it.todo('Should return false if HashComparer returns false')
   it.todo('Should throw if HashComparer throws')
 
