@@ -3,5 +3,5 @@ coverage
 dist
 data
 !src/data
-!test/data
+!tests/data
 .env
