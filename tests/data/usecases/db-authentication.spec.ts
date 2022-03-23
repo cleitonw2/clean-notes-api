@@ -40,7 +40,7 @@ describe('DbAddAccount', () => {
     expect(result).toBe(false)
   })
 
-  it('Should throw if LoadAccountByEmailRepository throws', async () => {
+  it('Should throw if LoadAccountByEmailRepository throws', () => {
     const { sut, loadAccountByEmailRepositorySpy } = makeSut()
     jest.spyOn(loadAccountByEmailRepositorySpy, 'loadByEmail').mockRejectedValueOnce(new Error())
     const promise = sut.auth(authParams)
@@ -61,7 +61,12 @@ describe('DbAddAccount', () => {
     expect(result).toBe(false)
   })
 
-  it.todo('Should throw if HashComparer throws')
+  it('Should throw if HashComparer throws', () => {
+    const { sut, hashComparerSpy } = makeSut()
+    jest.spyOn(hashComparerSpy, 'compare').mockRejectedValueOnce(new Error())
+    const promise = sut.auth(authParams)
+    expect(promise).rejects.toThrow()
+  })
 
   it.todo('Should call Encrypter with correct value')
   it.todo('Should throw if Encrypter throws')
