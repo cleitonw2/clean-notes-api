@@ -78,6 +78,11 @@ describe('DbAddAccount', () => {
     expect(encrypterSpy.value).toBe(loadAccountByEmailRepositorySpy.result.id)
   })
 
-  it.todo('Should throw if Encrypter throws')
+  it('Should throw if Encrypter throws', () => {
+    const { sut, encrypterSpy } = makeSut()
+    jest.spyOn(encrypterSpy, 'encrypt').mockRejectedValueOnce(new Error())
+    const promise = sut.auth(authParams)
+    expect(promise).rejects.toThrow()
+  })
   it.todo('Should return a accessToken if Encrypter returns a token')
 })
