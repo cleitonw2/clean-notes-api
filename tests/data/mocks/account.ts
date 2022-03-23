@@ -1,4 +1,4 @@
-import { AddAccountRepository, CheckAccountByEmailRepository } from '@/data/protocols'
+import { AddAccountRepository, CheckAccountByEmailRepository, LoadAccountByEmailRepository } from '@/data/protocols'
 
 export class AddAccountRepositorySpy implements AddAccountRepository {
   params: AddAccountRepository.Params
@@ -19,5 +19,19 @@ export class CheckAccountByEmailRepositorySpy implements CheckAccountByEmailRepo
   async checkByEmail (email: string): Promise<boolean> {
     this.email = email
     return this.result
+  }
+}
+
+export class LoadAccountByEmailRepositorySpy implements LoadAccountByEmailRepository {
+  result = {
+    id: 'any_id',
+    password: 'any_password'
+  }
+
+  email: string
+
+  async loadByEmail (email: string): Promise<LoadAccountByEmailRepository.Result> {
+    this.email = email
+    return Promise.resolve(this.result)
   }
 }
