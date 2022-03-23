@@ -54,7 +54,13 @@ describe('DbAddAccount', () => {
     expect(hashComparerSpy.hash).toBe(loadAccountByEmailRepositorySpy.result.password)
   })
 
-  it.todo('Should return false if HashComparer returns false')
+  it('Should return false if HashComparer returns false', async () => {
+    const { sut, hashComparerSpy } = makeSut()
+    hashComparerSpy.result = false
+    const result = await sut.auth(authParams)
+    expect(result).toBe(false)
+  })
+
   it.todo('Should throw if HashComparer throws')
 
   it.todo('Should call Encrypter with correct value')
