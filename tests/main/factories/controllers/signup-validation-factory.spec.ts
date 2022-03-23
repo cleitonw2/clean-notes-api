@@ -1,5 +1,6 @@
 import {
   EmailValidation,
+  PasswordValidation,
   RequiredFieldValidation,
   ValidationComposite
 } from '@/validation/validators'
@@ -24,6 +25,7 @@ describe('SignUpValidation Factory', () => {
     for (const field of ['name', 'email', 'password']) {
       validations.push(new RequiredFieldValidation(field))
     }
+    validations.push(new PasswordValidation('password'))
     validations.push(new EmailValidation('email', makeEmailValidator()))
     expect(ValidationComposite).toHaveBeenCalledWith(validations)
   })
