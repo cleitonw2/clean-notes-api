@@ -84,5 +84,10 @@ describe('DbAddAccount', () => {
     const promise = sut.auth(authParams)
     expect(promise).rejects.toThrow()
   })
-  it.todo('Should return a accessToken if Encrypter returns a token')
+
+  it('Should return a accessToken if Encrypter returns a token', async () => {
+    const { sut, encrypterSpy } = makeSut()
+    const result = await sut.auth(authParams) as any
+    expect(result?.accessToken).toBe(encrypterSpy.result)
+  })
 })
