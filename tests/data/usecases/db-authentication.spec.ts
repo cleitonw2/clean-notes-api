@@ -1,23 +1,27 @@
 import { DbAuthentication } from '@/data/usecases'
-import { LoadAccountByEmailRepositorySpy, HashComparerSpy } from '../mocks'
+import { LoadAccountByEmailRepositorySpy, HashComparerSpy, EncrypterSpy } from '../mocks'
 
 type SutTypes = {
   sut: DbAuthentication
   loadAccountByEmailRepositorySpy: LoadAccountByEmailRepositorySpy
   hashComparerSpy: HashComparerSpy
+  encrypterSpy: EncrypterSpy
 }
 
 const makeSut = (): SutTypes => {
   const loadAccountByEmailRepositorySpy = new LoadAccountByEmailRepositorySpy()
   const hashComparerSpy = new HashComparerSpy()
+  const encrypterSpy = new EncrypterSpy()
   const sut = new DbAuthentication(
     loadAccountByEmailRepositorySpy,
-    hashComparerSpy
+    hashComparerSpy,
+    encrypterSpy
   )
   return {
     sut,
     loadAccountByEmailRepositorySpy,
-    hashComparerSpy
+    hashComparerSpy,
+    encrypterSpy
   }
 }
 
@@ -68,7 +72,12 @@ describe('DbAddAccount', () => {
     expect(promise).rejects.toThrow()
   })
 
-  it.todo('Should call Encrypter with correct value')
+  it('Should call Encrypter with correct value', async () => {
+    const { sut, encrypterSpy, loadAccountByEmailRepositorySpy } = makeSut()
+    await sut.auth(authParams)
+    expect(encrypterSpy.value).toBe(loadAccountByEmailRepositorySpy.result.id)
+  })
+
   it.todo('Should throw if Encrypter throws')
   it.todo('Should return a accessToken if Encrypter returns a token')
 })
