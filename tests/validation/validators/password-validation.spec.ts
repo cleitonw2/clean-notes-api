@@ -10,5 +10,9 @@ describe('PasswordValidation', () => {
     expect(error).toEqual(new InvalidParamError('password'))
   })
 
-  it.todo('Should return false if validation success')
+  it('Should return false if validation success', () => {
+    const sut = makeSut()
+    const error = sut.isValid({ password: 'valid_password' })
+    expect(error).toBe(false)
+  })
 })
