@@ -72,5 +72,9 @@ describe('Login Controller', () => {
     expect(httpResponse).toEqual(serverError(new Error()))
   })
 
-  it.todo('Should return a accessToken on success')
+  it('Should return a accessToken on success', async () => {
+    const { sut, authenticationSpy } = makeSut()
+    const httpResponse = await sut.handle(mockRequest())
+    expect(httpResponse.body.accessToken).toBe(authenticationSpy.result.accessToken)
+  })
 })
