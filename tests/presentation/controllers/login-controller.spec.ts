@@ -1,6 +1,6 @@
 import { LoginController } from '@/presentation/controllers'
 import { badRequest, serverError } from '@/presentation/helpers'
-import { ValidationSpy } from '../mocks'
+import { ValidationSpy, AuthenticationSpy } from '../mocks'
 
 const mockRequest = (): LoginController.Request => ({
   email: 'any_email@mail.com',
@@ -10,14 +10,17 @@ const mockRequest = (): LoginController.Request => ({
 type SutTypes = {
   sut: LoginController
   validationSpy: ValidationSpy
+  authenticationSpy: AuthenticationSpy
 }
 
 const makeSut = (): SutTypes => {
   const validationSpy = new ValidationSpy()
-  const sut = new LoginController(validationSpy)
+  const authenticationSpy = new AuthenticationSpy()
+  const sut = new LoginController(validationSpy, authenticationSpy)
   return {
     sut,
-    validationSpy
+    validationSpy,
+    authenticationSpy
   }
 }
 
@@ -46,7 +49,12 @@ describe('Login Controller', () => {
     expect(httpResponse).toEqual(serverError(new Error()))
   })
 
-  it.todo('Should call Authentication with correct values')
+  it('Should call Authentication with correct values', async () => {
+    const { sut, authenticationSpy } = makeSut()
+    const request = mockRequest()
+    await sut.handle(request)
+    expect(authenticationSpy.params).toEqual(request)
+  })
 
   it.todo('Should return 403 if Authentication returns false')
 
