@@ -13,7 +13,7 @@ export class SignUpController implements Controller {
     try {
       const error = this.validation.isValid(request) as any
       if (error) return badRequest(error)
-      const result = await this.addAccount.add(request) as any
+      const result = await this.addAccount.add(request)
       if (!result) return forbidden(new EmailInUseError())
       return ok(result)
     } catch (error) {
