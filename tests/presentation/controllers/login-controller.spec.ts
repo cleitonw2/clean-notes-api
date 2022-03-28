@@ -1,5 +1,5 @@
 import { LoginController } from '@/presentation/controllers'
-import { badRequest } from '@/presentation/helpers'
+import { badRequest, serverError } from '@/presentation/helpers'
 import { ValidationSpy } from '../mocks'
 
 const mockRequest = (): LoginController.Request => ({
@@ -37,7 +37,14 @@ describe('Login Controller', () => {
     expect(httpResponse).toEqual(badRequest(error))
   })
 
-  it.todo('Should return 500 if Validation throws')
+  it('Should return 500 if Validation throws', async () => {
+    const { sut, validationSpy } = makeSut()
+    jest.spyOn(validationSpy, 'isValid').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const httpResponse = await sut.handle(mockRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
+  })
 
   it.todo('Should call Authentication with correct values')
 
