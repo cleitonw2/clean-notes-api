@@ -1,5 +1,5 @@
 import { LoginController } from '@/presentation/controllers'
-import { badRequest, serverError } from '@/presentation/helpers'
+import { badRequest, serverError, unauthorized } from '@/presentation/helpers'
 import { ValidationSpy, AuthenticationSpy } from '../mocks'
 
 const mockRequest = (): LoginController.Request => ({
@@ -56,7 +56,12 @@ describe('Login Controller', () => {
     expect(authenticationSpy.params).toEqual(request)
   })
 
-  it.todo('Should return 403 if Authentication returns false')
+  it('Should return 401 if Authentication returns false', async () => {
+    const { sut, authenticationSpy } = makeSut()
+    authenticationSpy.result = false as any
+    const httpResponse = await sut.handle(mockRequest())
+    expect(httpResponse).toEqual(unauthorized())
+  })
 
   it.todo('Should return 500 if Authentication throws')
 
