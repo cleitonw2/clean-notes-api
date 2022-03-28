@@ -1,5 +1,5 @@
 import { Authentication } from '@/usecases/authentication'
-import { badRequest, serverError } from '../helpers'
+import { badRequest, serverError, unauthorized } from '../helpers'
 import { Controller, HttpResponse, Validation } from '../protocols'
 
 export class LoginController implements Controller {
@@ -12,7 +12,8 @@ export class LoginController implements Controller {
     try {
       const error = this.validation.isValid(request) as any
       if (error) return badRequest(error)
-      await this.authentication.auth(request)
+      const result = await this.authentication.auth(request)
+      if (!result) return unauthorized()
     } catch (error) {
       return serverError(error)
     }
